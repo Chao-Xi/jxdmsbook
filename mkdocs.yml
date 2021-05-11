@@ -1,1 +1,29 @@
-site_name: My Docs
+site_name: Jacob Distributed Message System Book
+site_description: "Jacob's 分布式系统技术与实战教程"
+site_author: "Jacob Xi"
+copyright: "Copyright &copy; 2021-9999 Jacob Xi"
+
+plugins:
+  - search # necessary for search to work
+  - awesome-pages
+
+nav:
+  - 'Welcome': "index.md"
+      
+repo_url: https://github.com/Chao-Xi/jxdmsbook.git
+repo_name: "jxdmsbook"
+
+theme: 
+  language: zh
+  name: 'material'
+  include_sidebar: true
+  logo: 'images/logo.png'
+  favicon: 'images/logo.png'
+  feature:
+    tabs: false
+  palette:
+    primary: 'indigo'
+    accent: 'indigo'
+  i18n:
+    prev: 'Previous'
+    next: 'Next'
