@@ -12,7 +12,8 @@ nav:
   - 'Kafka 技术详解':
     - '第一节 Kafka设计介绍': '1kafka/1chap1_kafka.md' 
     - '第二节 Kafka中的关键术语解释': '1kafka/2chap1_terminology.md' 
-      
+    - '第三节 Kafka的工作原理和过程': '1kafka/3chap1_process.md' 
+
 repo_url: https://github.com/Chao-Xi/jxdmsbook.git
 repo_name: "jxdmsbook"
 
