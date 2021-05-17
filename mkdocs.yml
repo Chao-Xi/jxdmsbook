@@ -14,6 +14,8 @@ nav:
     - '第二节 Kafka中的关键术语解释': '1kafka/2chap1_terminology.md' 
     - '第三节 Kafka的工作原理和过程': '1kafka/3chap1_process.md' 
     - '第四节 Kafka 集群搭建': '1kafka/4chap1_install.md'
+    - '第五节 Kafka API': '1kafka/5chap1_API.md'
+    - '第六节 图解 Kafka': '1kafka/6chap1_chater.md'
 
 repo_url: https://github.com/Chao-Xi/jxdmsbook.git
 repo_name: "jxdmsbook"
