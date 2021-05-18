@@ -16,6 +16,7 @@ nav:
     - '第四节 Kafka 集群搭建': '1kafka/4chap1_install.md'
     - '第五节 Kafka API': '1kafka/5chap1_API.md'
     - '第六节 图解 Kafka': '1kafka/6chap1_chater.md'
+    - '第七节 Kafka 宕机引发的高可用问题': '1kafka/7chap1_kafka_ha.md'
 
 repo_url: https://github.com/Chao-Xi/jxdmsbook.git
 repo_name: "jxdmsbook"
