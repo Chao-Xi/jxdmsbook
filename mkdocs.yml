@@ -18,6 +18,8 @@ nav:
     - '第六节 图解 Kafka': '1kafka/6chap1_chater.md'
     - '第七节 Kafka 宕机引发的高可用问题': '1kafka/7chap1_kafka_ha.md'
     - '第八节 面试必问的 kafka 知识点': '1kafka/8chap1_kafka_int1.md'
+    - '第九节 Kafka经典面试题详解': '1kafka/'
+
 
 repo_url: https://github.com/Chao-Xi/jxdmsbook.git
 repo_name: "jxdmsbook"
