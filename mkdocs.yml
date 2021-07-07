@@ -20,6 +20,7 @@ nav:
     - '第八节 面试必问的 kafka 知识点': '1kafka/8chap1_kafka_int1.md'
     - '第九节 Kafka经典面试题详解': '1kafka/9chap1_kafka_int2.md'
     - '第十节 RabbitMQ和Kafka的比较': '1kafka/10kafka_rabbitmq.md'
+    - '第十一节 5 分钟搞懂高性能分布式消息系统 Kafka': '1kafka/11chap1_kafka_5min.md'
   - 'Kafka K8S&Opt':
     - 'L1 在 Kubernetes 上运行高可用的 Kafka 集群': '2kafka/1kafka_k8s.md'
     - 'L2 Kafka实战—常见运维操作': '2kafka/2kafa_opt1.md'
