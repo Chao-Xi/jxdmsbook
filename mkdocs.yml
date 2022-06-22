@@ -10,6 +10,8 @@ plugins:
 
 nav:
   - 'Welcome': "index.md"
+  - 'Kafka 核心技术':
+    - 'Chap1 Kafka 入门': 'chap_ka1/1kafka_intro.md'
   - 'Kafka 技术详解':
     - '第一节 Kafka设计介绍': '1kafka/1chap1_kafka.md' 
     - '第二节 Kafka中的关键术语解释': '1kafka/2chap1_terminology.md' 
@@ -31,6 +33,7 @@ nav:
     - '2 系统稳定性的关键系统日志&编写可观测的日志': '3track_mon/2log_setup.md'
   - 'Serverless 技术':
     - 'L1 Serverless 价值与机构': '4serverless/1Serverless_intro.md'
+    - 'L2 Serverless 函数的简介': '4serverless/2functions.md'
 
 
 repo_url: https://github.com/Chao-Xi/jxdmsbook.git
