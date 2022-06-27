@@ -1,4 +1,4 @@
-# **Chap=1 Kafka 入门**
+# **Chap1 Kafka 入门**
 
 ![Alt Image Text](../images/chapk1_1_1.jpeg "Body image")
 
