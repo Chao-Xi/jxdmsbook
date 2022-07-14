@@ -15,6 +15,7 @@ nav:
     - 'Chap2 kafka基本部署参数': 'chap_ka1/2kafa_setup.md'
     - 'chap3 客户端实践及原理1': 'chap_ka1/3kafa_client1.md'
     - 'chap4 客户端实践及原理2': 'chap_ka1/4kafka_client2.md'
+    - 'Chap5 Kafka 内核': 'chap_ka1/5kafka_core.md'
   - 'Kafka 技术详解':
     - '第一节 Kafka设计介绍': '1kafka/1chap1_kafka.md' 
     - '第二节 Kafka中的关键术语解释': '1kafka/2chap1_terminology.md' 
