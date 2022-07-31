@@ -16,6 +16,7 @@ nav:
     - 'chap3 客户端实践及原理1': 'chap_ka1/3kafa_client1.md'
     - 'chap4 客户端实践及原理2': 'chap_ka1/4kafka_client2.md'
     - 'Chap5 Kafka 内核': 'chap_ka1/5kafka_core.md'
+    - 'Chap6 Kafka 管理&工具脚本': 'chap_ka1/6kafka_mgt.md'
   - 'Kafka 技术详解':
     - '第一节 Kafka设计介绍': '1kafka/1chap1_kafka.md' 
     - '第二节 Kafka中的关键术语解释': '1kafka/2chap1_terminology.md' 
