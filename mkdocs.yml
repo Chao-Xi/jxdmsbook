@@ -39,6 +39,14 @@ nav:
   - 'Serverless 技术':
     - 'L1 Serverless 价值与机构': '4serverless/1Serverless_intro.md'
     - 'L2 Serverless 函数的简介': '4serverless/2functions.md'
+  - 'dapr Distributed Application Runtime':
+    - '1 Dapr 入门教程': 'dapr/1dapr_intro.md'
+    - '2 Dapr 入门教程之发布订阅': 'dapr/2dapr_pub_sub.md'
+    - '3 Dapr 入门教程之消息队列': 'dapr/3dapr_msg.md'
+    - '4 Dapr 可观测性之分布式追踪': 'dapr/4dapr_tracing.md'
+    - '5 Dapr 可观测性之指标与日志': 'dapr/5dapr_mon.md'
+    - '6 Dapr 入门教程之密钥存储': 'dapr/6dapr_sec.md'
+    - '7 Dapr 入门教程之中间件': 'dapr/7dapr_middle.md'
 
 
 repo_url: https://github.com/Chao-Xi/jxdmsbook.git
