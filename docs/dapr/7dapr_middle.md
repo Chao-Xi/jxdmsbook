@@ -1,4 +1,4 @@
-# **Dapr 入门教程之中间件**
+# **7 Dapr 入门教程之中间件**
 
 Dapr 允许通过链接一系列中间件组件来定义自定义处理管道。一个请求在被路由到用户代码之前会经过所有定义的中间件组件，然后在返回到客户端之前以相反的顺序经过定义的中间件。
 
@@ -282,7 +282,6 @@ echo-ingress   nginx   echo.dapr.local   192.168.0.52   80      59m
 
 ![Alt Image Text](../images/dapr1_7_8.png "Body image")
 
-
 这是因为从 Dapr 1.4 版本开始，daprd 进程就被锁定为只接受来自 pod 边界的连接，以实现良好的安全措施。如果要启用外部调用 Dapr，则需要在应用中添加以下注解：
 
 ```
@@ -293,10 +292,8 @@ dapr.io/sidecar-listen-addresses: "0.0.0.0"
 
 ![Alt Image Text](../images/dapr1_7_9.png "Body image")
 
-
 授权后会自动跳转回来，正常就会显示 echo 接口返回的数据，包括 Access Token 的数据和 text 参数的值。
 
 ![Alt Image Text](../images/dapr1_7_10.png "Body image")
 
 到这里我们就实现了在 Dapr 中为应用启用 OAuth 中间件，对原始应用没有任何侵入性。
-

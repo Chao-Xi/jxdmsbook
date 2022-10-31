@@ -1,4 +1,4 @@
-# **Dapr 入门教程之密钥存储**
+# **6 Dapr 入门教程之密钥存储**
 
 **应用程序通常通过使用专用的 Secret 存储来存储敏感信息，如密钥和 Token，用于与数据库、服务和外部系统进行身份验证的 Secret 等**。
 
@@ -15,7 +15,6 @@
 默认情况下，Dapr 在 Kubernetes 模式下通过 Helm 或 `dapr init -k` 部署的时候，启用一个内置的 Kubernetes Secret 存储，如果你使用另一个 Secret 存储，你可以使用 `disable-builtin-k8s-secret-store` 设置禁用 `Dapr Kubernetes Secret` 存储。
 
 应用程序代码可以调用 Secret 构建块 API 从 Dapr 支持的 Secret 存储中检索私密数据，这些 Secret 存储可以在你的代码中使用。
-
 
 例如，下图显示了一个应用程序从配置的云 Secret 存储库中的一个名为 vault 的 Secret 存储库中请求名为 mysecret 的私密数据。
 
@@ -67,7 +66,6 @@ app.get("/getsecret", (_req, res) => {
 });
 ```
 
-
 该代码从 secret store 中获取名为 mysecret 的数据，并显示该数据的 Base64 编码数据。
 
 我们在 secrets.json 文件中添加一个 mysecret 的 Secret 数据：
@@ -101,7 +99,6 @@ spec:
 > **其中 Secret 存储 JSON 的路径是与你调用 dapr run 的位置相关的。**
 
 然后我们需要将上面的 Secret Store 名称设置为环境变量：
-
 
 ```
 # nux/Mac OS:
@@ -138,6 +135,7 @@ INFO[0000] placement tables updated, version: 0          app_id=nodeapp instance
 ℹ️  Updating metadata for app command: node app.js
 ✅  You're up and running! Both Dapr and your app logs will appear here.
 ```
+
 启动后我们可以使用 dapr list 来查看应用列表：
 
 ```
@@ -147,8 +145,6 @@ $ dapr list
 ```
 
 启动完成后我们可以直接访问应用的 getsecret 接口：
-
-
 
 ```
 $ curl -k http://localhost:3000/getsecret
@@ -273,7 +269,6 @@ curl -k http://192.168.0.50/getsecret
 
 正常上面的请求输出结果为 YWJjZAo=，也可以查看 Node 应用日志：
 
-
 ```
 $ kubectl logs --selector=app=node -c node
 Node App listening on port 3000!
@@ -281,11 +276,9 @@ Fetching URL: http://localhost:3500/v1.0/secrets/kubernetes/mysecret?metadata.na
 Base64 encoded secret is: YWJjZAo=
 ```
 
-
-
 从上面日志可以看出 Node 应用程序正在向 dapr 发出请求，以便从 secret store 获取 secret 数据，注意其中的 mysecret 是上面创建的 Secret 对象名称。
 
-当然如果你使用的是其他 secret store，比如 HashiCorp Vault 则需要创建一个对应的 Component 组件了，类型为`secretstores.hashicorp.vault`，如下所示的资源清单：
+当然如果你使用的是其他 secret store，比如 HashiCorp Vault 则需要创建一个对应的 Component 组件了，类型为 `secretstores.hashicorp.vault`，如下所示的资源清单：
 
 ```
 apiVersion: dapr.io/v1alpha1
@@ -321,5 +314,3 @@ spec:
   - name: vaultValueType # Optional. default: "map"
     value: "map"
 ```
-
-
