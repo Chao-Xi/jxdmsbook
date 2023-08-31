@@ -10,6 +10,11 @@ plugins:
 
 nav:
   - 'Welcome': "index.md"
+  - 'Kafka 快速入门2023':
+    - '1 初识 Kafka': 'chap_ka2_intro/1intro.md'
+    - '2 Kafka 安装和重要配置': 'chap_ka2_intro/2install.md'
+    - '3 Kafka Producer': 'chap_ka2_intro/3producer.md'
+    - '4 Kafka Consumer': 'chap_ka2_intro/4consumer.md'
   - 'Kafka 核心技术':
     - 'Chap1 Kafka 入门': 'chap_ka1/1kafka_intro.md'
     - 'Chap2 kafka基本部署参数': 'chap_ka1/2kafa_setup.md'
