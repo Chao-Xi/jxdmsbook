@@ -1,0 +1,1818 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Jacob's 分布式系统技术与实战教程">
+      
+      
+        <meta name="author" content="Jacob Xi">
+      
+      
+        <link rel="canonical" href="https://chao-xi.github.io/jxdmsbook/dapr/3dapr_msg/">
+      
+      
+        <link rel="prev" href="../2dapr_pub_sub/">
+      
+      
+        <link rel="next" href="../4dapr_tracing/">
+      
+      
+      <link rel="icon" href="../../images/logo.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.2">
+    
+    
+      
+        <title>3 Dapr 入门教程之消息队列 - Jacob Distributed Message System Book</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.50c56a3b.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#3-dapr" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="Jacob Distributed Message System Book" class="md-header__button md-logo" aria-label="Jacob Distributed Message System Book" data-md-component="logo">
+      
+  <img src="../../images/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Jacob Distributed Message System Book
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              3 Dapr 入门教程之消息队列
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Chao-Xi/jxdmsbook.git" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    jxdmsbook
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Jacob Distributed Message System Book" class="md-nav__button md-logo" aria-label="Jacob Distributed Message System Book" data-md-component="logo">
+      
+  <img src="../../images/logo.png" alt="logo">
+
+    </a>
+    Jacob Distributed Message System Book
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Chao-Xi/jxdmsbook.git" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    jxdmsbook
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Welcome
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Kafka 快速入门2023
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Kafka 快速入门2023
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap_ka2_intro/1intro/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1 初识 Kafka
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap_ka2_intro/2install/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2 Kafka 安装和重要配置
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap_ka2_intro/3producer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3 Kafka Producer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap_ka2_intro/4consumer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4 Kafka Consumer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Kafka 核心技术
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Kafka 核心技术
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap_ka1/1kafka_intro/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Chap1 Kafka 入门
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap_ka1/2kafa_setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Chap2 kafka基本部署参数
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap_ka1/3kafa_client1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    chap3 客户端实践及原理1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap_ka1/4kafka_client2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    chap4 客户端实践及原理2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap_ka1/5kafka_core/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Chap5 Kafka 内核
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap_ka1/6kafka_mgt/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Chap6 Kafka 管理&工具脚本
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Kafka 技术详解
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Kafka 技术详解
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1kafka/1chap1_kafka/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    第一节 Kafka设计介绍
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1kafka/2chap1_terminology/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    第二节 Kafka中的关键术语解释
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1kafka/3chap1_process/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    第三节 Kafka的工作原理和过程
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1kafka/4chap1_install/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    第四节 Kafka 集群搭建
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1kafka/5chap1_API/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    第五节 Kafka API
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1kafka/6chap1_chater/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    第六节 图解 Kafka
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1kafka/7chap1_kafka_ha/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    第七节 Kafka 宕机引发的高可用问题
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1kafka/8chap1_kafka_int1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    第八节 面试必问的 kafka 知识点
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1kafka/9chap1_kafka_int2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    第九节 Kafka经典面试题详解
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1kafka/10kafka_rabbitmq/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    第十节 RabbitMQ和Kafka的比较
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1kafka/11chap1_kafka_5min/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    第十一节 5 分钟搞懂高性能分布式消息系统 Kafka
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Kafka K8S&Opt
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Kafka K8S&Opt
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2kafka/1kafka_k8s/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    L1 在 Kubernetes 上运行高可用的 Kafka 集群
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2kafka/2kafa_opt1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    L2 Kafka实战—常见运维操作
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2kafka/3kafka_opt2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    L3 kafka应用经验
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2kafka/4operator/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    L4 Kafka Operator 实践和解析
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    分布式链路追踪
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            分布式链路追踪
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../3track_mon/1data_mon/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1 数据观测：数据追踪的基石
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../3track_mon/2log_setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2 系统稳定性的关键系统日志&编写可观测的日志
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Serverless 技术
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Serverless 技术
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../4serverless/1Serverless_intro/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    L1 Serverless 价值与机构
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../4serverless/2functions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    L2 Serverless 函数的简介
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    dapr Distributed Application Runtime
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            dapr Distributed Application Runtime
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../1dapr_intro/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1 Dapr 入门教程
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2dapr_pub_sub/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2 Dapr 入门教程之发布订阅
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    3 Dapr 入门教程之消息队列
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    3 Dapr 入门教程之消息队列
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      本地运行
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kubernetes" class="md-nav__link">
+    <span class="md-ellipsis">
+      在 Kubernetes 中运行
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      如何工作
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../4dapr_tracing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4 Dapr 可观测性之分布式追踪
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../5dapr_mon/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5 Dapr 可观测性之指标与日志
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../6dapr_sec/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6 Dapr 入门教程之密钥存储
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../7dapr_middle/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    7 Dapr 入门教程之中间件
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      本地运行
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kubernetes" class="md-nav__link">
+    <span class="md-ellipsis">
+      在 Kubernetes 中运行
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      如何工作
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="3-dapr"><strong>3 Dapr 入门教程之消息队列</strong></h1>
+<p>前面我们了解了 Dapr 对发布订阅的支持，本节我们将来介绍了 Dapr 中对消息队列的支持。</p>
+<p>消息队列，分为两种绑定，<strong>一种是输出绑定，一种是输入绑定</strong>。出和入是看数据的流向，输出绑定就是作为生产者的服务把消息通过 Dapr 传给消息队列，输入绑定就是作为消费者的服务通过 Dapr 从消息队列里得到消息。</p>
+<p>这里的<strong>消息队列和发布订阅里的消息总线</strong>有什么区别呢？</p>
+<ul>
+<li>一个消息进入消息总线的话，所有订阅者都能得到这个消息，而一个消息进入消息队列的话，由消费者来取，一次只有一个人能得到。</li>
+<li>此外，消息总线是不要求处理顺序的，两个消息进入消息总线，谁先被拿到顺序是不一定的，而消息队列可以保证是先入先出的。</li>
+</ul>
+<p>本节我们将创建两个微服务，一个具有输入绑定，另一个具有输出绑定，前面我们都使用的 Redis 这种中间件，这里我们将绑定到 Kafka</p>
+<ul>
+<li>Node.js 微服务使用输入绑定</li>
+<li>Python 微服务利用输出绑定</li>
+</ul>
+<p>绑定连接到 Kafka，允许我们将消息推送到 Kafka 实例（从 Python 微服务）中，并从该实例（从 Node.js 微服务）接收消息，而不必知道实例的位置。相反，同样只需要直接使用 Dapr API 通过 sidecars 连接即可。</p>
+<h2 id="_1"><strong>本地运行</strong></h2>
+<p>首先我们在本地来运行示例应用，对应的架构图如下所示：</p>
+<p><img alt="Alt Image Text" src="../../images/dapr1_3_1.png" title="Body image" /></p>
+<p>同样使用 quickstarts 这个代码仓库：</p>
+<pre><code>git clone [-b &lt;dapr_version_tag&gt;] https://github.com/dapr/quickstarts.git
+</code></pre>
+<p>由于我们这里是使用 Kafka 来做消息队列的中间件，所以我们首先需要在本地环境运行 Kafka，我们可以直接使用 <a href="https://github.com/wurstmeister/kafka-docker">https://github.com/wurstmeister/kafka-docker </a>这个项目以 Docker 方式运行。</p>
+<p>定位到 quickstarts 的 tutorials/bindings 目录，下面有一个 <code>docker-compose-single-kafka.yml</code> 文件：</p>
+<pre><code>$ cd tutorials/bindings
+$ cat docker-compose-single-kafka.yml
+version: '2'
+services:
+  zookeeper:
+    image: ghcr.io/dapr/3rdparty/zookeeper:latest
+    ports:
+      - &quot;2181:2181&quot;
+  kafka:
+    image: ghcr.io/dapr/3rdparty/kafka:latest
+    ports:
+      - &quot;9092:9092&quot;
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: 127.0.0.1
+      KAFKA_CREATE_TOPICS: &quot;sample:1:1&quot;
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+</code></pre>
+<p>我们可以直接而使用 docker-compose 来启动一个单实例的 Kafka：</p>
+<pre><code>$ docker-compose -f ./docker-compose-single-kafka.yml up -d
+</code></pre>
+<p>隔一段时间镜像拉取完成后以容器方式启动 Kafka：</p>
+<pre><code>$ docker-compose -f ./docker-compose-single-kafka.yml ps
+NAME                   COMMAND                  SERVICE             STATUS              PORTS
+bindings-kafka-1       &quot;start-kafka.sh&quot;         kafka               running             0.0.0.0:9092-&gt;9092/tcp
+bindings-zookeeper-1   &quot;/bin/sh -c '/usr/sb…&quot;   zookeeper           running
+</code></pre>
+<p>在本地运行了 Kafka 后，接着我们可以运行输入绑定的 Node.js 微服务：</p>
+<pre><code>$ cd nodeapp
+</code></pre>
+<p>同样先安装服务依赖：</p>
+<pre><code>$ npm install  # 或者执行 yarn 命令
+</code></pre>
+<p>然后我们就可以使用 dapr run 命令来启动该微服务了，启动方式我们应该比较熟悉了，如下所示：</p>
+<pre><code>$ dapr run --app-id bindings-nodeapp --app-port 3000 node app.js --components-path ../components
+</code></pre>
+<p>上面的命令和前面有点不一样的地方是多了一个 --components-path 用来指定组件路径，这是因为现在我们要使用 Kafka 这种中间件来作为我们的消息队列组件，那么我们就需要告诉 Dapr，在 <code>./components</code> 目录下面就包含一个对应的 kafka_bindings.yaml 文件，内容如下所示：</p>
+<pre><code>apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: sample-topic
+spec:
+  type: bindings.kafka
+  version: v1
+  metadata:
+    # Kafka broker connection setting
+    - name: brokers
+      value: localhost:9092
+    # consumer configuration: topic and consumer group
+    - name: topics
+      value: sample
+    - name: consumerGroup
+      value: group1
+    # publisher configuration: topic
+    - name: publishTopic
+      value: sample
+    - name: authRequired
+      value: &quot;false&quot;
+</code></pre>
+<p><strong>前面在本地模式下面我们没有主动声明组件，是因为我们使用的就是默认的 Redis，而 Kafka 并不是内置就有的</strong>，所以需要我们主动声明，注意上面组件的类型为 <code>type: bindings.kafka</code>，metadata 下面是访问 Kafka 相关的元数据。正常情况下上面的启动命令会输出如下所示的日志信息：~</p>
+<pre><code>ℹ️  Starting Dapr with id bindings-nodeapp. HTTP Port: 54215. gRPC Port: 54216
+INFO[0000] starting Dapr Runtime -- version 1.8.4 -- commit 18575823c74318c811d6cd6f57ffac76d5debe93  app_id=bindings-nodeapp instance=MBP2022.local scope=dapr.runtime type=log ver=1.8.4
+# ......
+INFO[0000] dapr initialized. Status: Running. Init Elapsed 347.136ms  app_id=bindings-nodeapp instance=MBP2022.local scope=dapr.runtime type=log ver=1.8.4
+ℹ️  Updating metadata for app command: node app.js
+✅  You're up and running! Both Dapr and your app logs will appear here.
+
+INFO[0001] placement tables updated, version: 0          app_id=bindings-nodeapp instance=MBP2022.local scope=dapr.runtime.actor.internal.placement type=log ver=1.8.4
+</code></pre>
+<p>接下来，需要运行输出绑定的 Python 微服务，定位到 pythonapp 目录，安装 requests 依赖：</p>
+<pre><code>$ cd pythonapp
+$ pip3 install requests
+</code></pre>
+<p>然后同样用 dapr run 命令来启动该微服务，也要注意带上后面的 <code>--components-path</code> 参数：</p>
+<pre><code>$ dapr run --app-id bindings-pythonapp python3 app.py --components-path ../components
+ℹ️  Starting Dapr with id bindings-pythonapp. HTTP Port: 54554. gRPC Port: 54555
+ℹ️  Checking if Dapr sidecar is listening on HTTP port 54554
+INFO[0000] starting Dapr Runtime -- version 1.8.4 -- commit 18575823c74318c811d6cd6f57ffac76d5debe93  app_id=bindings-pythonapp instance=MBP2022.local scope=dapr.runtime type=log ver=1.8.4
+# ......
+ℹ️  Checking if Dapr sidecar is listening on GRPC port 54555
+ℹ️  Dapr sidecar is up and running.
+ℹ️  Updating metadata for app command: python3 app.py
+✅  You're up and running! Both Dapr and your app logs will appear here.
+</code></pre>
+<p>启动完成后，观察 Python 服务的日志，可以看到不断输出如下所示成功输出绑定到 Kafka 的日志：</p>
+<pre><code>== APP == {'data': {'orderId': 1}, 'operation': 'create'}
+== APP == &lt;Response [204]&gt;
+== APP == {'data': {'orderId': 2}, 'operation': 'create'}
+== APP == &lt;Response [204]&gt;
+== APP == {'data': {'orderId': 3}, 'operation': 'create'}
+== APP == &lt;Response [204]&gt;
+# ......
+</code></pre>
+<p>同样这个时候 Node.js 微服务中也不断有新的日志数据产生：</p>
+<pre><code>== APP == &lt;Response [204]&gt;
+== APP == {'data': {'orderId': 1}, 'operation': 'create'}
+== APP == &lt;Response [204]&gt;
+== APP == {'data': {'orderId': 2}, 'operation': 'create'}
+== APP == &lt;Response [204]&gt;
+== APP == {'data': {'orderId': 3}, 'operation': 'create'}
+== APP == &lt;Response [204]&gt;
+# ......
+</code></pre>
+<p>这是因为 Python 微服务每隔 1s 就会向我们绑定的消息队列发送一条消息，而 Node.js 微服务作为消费者当然会接收到对应的消息数据。</p>
+<h2 id="kubernetes"><strong>在 Kubernetes 中运行</strong></h2>
+<p>上面在本地环境下可以正常运行 Dapr bindings 服务，接下来我们再次将该示例部署到 Kubernetes 集群中来进行观察。</p>
+<p>同样首先需要提供一个可用的 Kafka 实例，这里我们仍然使用 Helm Chart 方式来进行安装：</p>
+<pre><code>$ helm repo add bitnami https://charts.bitnami.com/bitnami
+$ helm repo update
+</code></pre>
+<p>然后使用如下所示的命令来安装 Kafka：</p>
+<pre><code>$ helm upgrade --install dapr-kafka bitnami/kafka --wait --namespace kafka -f ./kafka-non-persistence.yaml --create-namespace
+</code></pre>
+<p>这里我们指定了一个无需持久化数据（仅供测试）的 values 文件 <code>kafka-non-persistence.yaml</code>，内容如下所示：</p>
+<pre><code>replicas: 1
+
+# Disable persistent storage
+persistence:
+  enabled: false
+zookeeper:
+  persistence:
+    enabled: false
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: kubernetes.io/os
+                operator: In
+                values:
+                  - linux
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                  - amd64
+
+autoCreateTopicsEnable: true
+
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/os
+              operator: In
+              values:
+                - linux
+            - key: kubernetes.io/arch
+              operator: In
+              values:
+                - amd64
+</code></pre>
+<p>安装完成后可以查看 Pod 的状态来保证 Kafka 启动成功：</p>
+<pre><code>$ kubectl -n kafka get pods -w
+
+NAME                     READY   STATUS    RESTARTS   AGE
+dapr-kafka-0             1/1     Running   0          2m7s
+dapr-kafka-zookeeper-0   1/1     Running   0          2m57s
+</code></pre>
+<p>接下来我们首先需要在 Kubernetes 集群中配置使用 Kafka 作为 Binding 消息中间件的 Component 组件：</p>
+<pre><code># kafka_bindings.yaml
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: sample-topic
+spec:
+  type: bindings.kafka
+  version: v1
+  metadata:
+    # Kafka broker connection setting
+    - name: brokers
+      value: dapr-kafka.kafka:9092
+    # consumer configuration: topic and consumer group
+    - name: topics
+      value: sample
+    - name: consumerGroup
+      value: group1
+    # publisher configuration: topic
+    - name: publishTopic
+      value: sample
+    - name: authRequired
+      value: &quot;false&quot;
+</code></pre>
+<p>注意该对象上面指定的组件类型为 bindings.kafka，metadata 下面的元信息包括 Kafka brokers 地址、生产者和消费者的配置等等，直接应用上面的资源清单即可：</p>
+<pre><code>$ kubectl apply -f kafka_bindings.yaml
+$ kubectl get components sample-topic
+NAME           AGE
+sample-topic   13s
+</code></pre>
+<p>创建完成后在 Dapr Dashboard 中也可以看到对应的组件信息：</p>
+<p><img alt="Alt Image Text" src="../../images/dapr1_3_3.png" title="Body image" /></p>
+<p>接着部署两个 Node.js 和 Python 微服务即可：</p>
+<pre><code>$ kubectl apply -f deploy/node.yaml
+service/bindings-nodeapp created
+deployment.apps/bindings-nodeapp created
+$ kubectl apply -f deploy/python.yaml
+deployment.apps/bindings-pythonapp created
+$ kubectl get pods
+NAME                                  READY   STATUS    RESTARTS         AGE
+bindings-nodeapp-8bcdd744d-pj2j7      2/2     Running   0                3m44s
+bindings-pythonapp-7b7fcc579b-kqx6p   2/2     Running   0                3m39s
+</code></pre>
+<p>部署完成后可以同样分别观察 Node.js 和 Python 微服务的日志：</p>
+<pre><code>$ kubectl logs --selector app=bindingspythonapp -c python --tail=-1
+{'data': {'orderId': 1}, 'operation': 'create'}
+HTTPConnectionPool(host='localhost', port=3500): Max retries exceeded with url: /v1.0/bindings/sample-topic (Caused by NewConnectionError('&lt;urllib3.connection.HTTPConnection object at 0x7f9e75181390&gt;: Failed to establish a new connection: [Errno 111] Connection refused'))
+{'data': {'orderId': 2}, 'operation': 'create'}
+&lt;Response [204]&gt;
+{'data': {'orderId': 3}, 'operation': 'create'}
+&lt;Response [204]&gt;
+# ......
+$ kubectl logs --selector app=bindingsnodeapp -c node --tail=-1
+Node App listening on port 3000!
+Hello from Kafka!
+{ orderId: 2 }
+Hello from Kafka!
+{ orderId: 3 }
+# ......
+</code></pre>
+<p>可以看到两个微服务的日志也服务我们的预期的。</p>
+<h2 id="_2"><strong>如何工作</strong></h2>
+<p>前面我们在本地或 Kubernetes 中都运行了示例应用，而且没有更改任何代码，应用结果都符合预期，接下来我们看看这是如何工作的。</p>
+<p>在查看应用程序代码之前，<strong>我们先看看 Kafka 绑定组件的资源清单文件，它们为 Kafka 连接指定 brokers，为消费者指定 topics 和 consumerGroup，为生产者指定了 <code>publishTopic</code></strong>。</p>
+<p>我们创建了名为 sample-topic 的组件，然后我们通过该组件配置的 Kafka 中的 sample 主题来设置输入和输出绑定。</p>
+<pre><code>apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: sample-topic
+spec:
+  type: bindings.kafka
+  version: v1
+  metadata:
+    # Kafka broker connection setting
+    - name: brokers
+      value: [kafka broker address]
+    # consumer configuration: topic and consumer group
+    - name: topics
+      value: sample
+    - name: consumerGroup
+      value: group1
+    # publisher configuration: topic
+    - name: publishTopic
+      value: sample
+    - name: authRequired
+      value: &quot;false&quot;
+</code></pre>
+<p>现在我们先导航到 nodeapp 目录下面打开 app.js 文件，这是 Node.js 输入绑定示例应用的代码。这里使用 Express 暴露了一个 API 端点，需要注意的是 API 名称必须与在 Kafka 绑定组件中声明的组件名称相同，然后 Dapr 运行时将使用来自 sample 主题的事件，然后将 POST 请求与事件负载一起发送给 Node 应用程序。</p>
+<pre><code>const express = require(&quot;express&quot;);
+const bodyParser = require(&quot;body-parser&quot;);
+const port = process.env.APP_PORT ?? &quot;3000&quot;;
+
+require(&quot;isomorphic-fetch&quot;);
+
+const app = express();
+app.use(bodyParser.json());
+
+// 这里的 api 端点需要与声明的组件名称相同
+app.post(&quot;/sample-topic&quot;, (req, res) =&gt; {
+  console.log(&quot;Hello from Kafka!&quot;);
+  console.log(req.body);
+  res.status(200).send();
+});
+
+app.listen(port, () =&gt; console.log(`Node App listening on port ${port}!`));
+</code></pre>
+<p>所以当 Kafka 中收到消息后就会打印类似如下所示的日志：</p>
+<pre><code>Hello from Kafka!
+{ orderId: 3 }
+</code></pre>
+<p>然后我们导航到 pythonapp 目录下面打开 app.py 文件，这是输出绑定示例（生产者）应用程序的代码，该服务会每秒发送一次 POST 请求到 Dapr 的 http 端点的 <code>http://localhost:3500/v1.0/bindings/&lt;output_bindings_name&gt;</code>，并带有事件的 payload 数据。</p>
+<p>这个应用程序使用 bindings 组件名 <code>sample-topic</code> 作为 <code>&lt;output_bindings_name&gt;</code>，然后 Dapr 运行时将事件发送到上面的 Kafka 绑定组件中指定的 sample 主题上去。</p>
+<pre><code>import time
+import requests
+import os
+
+dapr_port = os.getenv(&quot;DAPR_HTTP_PORT&quot;, 3500)
+
+dapr_url = &quot;http://localhost:{}/v1.0/bindings/sample-topic&quot;.format(dapr_port)
+n = 0
+while True:
+    n += 1
+    payload = { &quot;data&quot;: {&quot;orderId&quot;: n}, &quot;operation&quot;: &quot;create&quot; }
+    print(payload, flush=True)
+    try:
+        response = requests.post(dapr_url, json=payload)
+        print(response, flush=True)
+
+    except Exception as e:
+        print(e, flush=True)
+
+    time.sleep(1)
+</code></pre>
+<p>上面代码中最重要的依然是 Dapr API 地址 <strong><code>dapr_url</code> 的拼接 <code>"http://localhost:{}/v1.0/bindings/sample-topic".format(dapr_port)</code>，注意我们依然是面向 localhost 编程，而 <code>v1.0/bindings/&lt;output_bindings_name&gt;</code> 端点则是 Dapr API 为我们封装的输出消息绑定的统一接口，非常简单方便</strong>。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2021-9999 Jacob Xi
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7c377c4.min.js"></script>
+      
+    
+  </body>
+</html>

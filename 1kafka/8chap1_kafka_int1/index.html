@@ -1,0 +1,2137 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Jacob's 分布式系统技术与实战教程">
+      
+      
+        <meta name="author" content="Jacob Xi">
+      
+      
+        <link rel="canonical" href="https://chao-xi.github.io/jxdmsbook/1kafka/8chap1_kafka_int1/">
+      
+      
+        <link rel="prev" href="../7chap1_kafka_ha/">
+      
+      
+        <link rel="next" href="../9chap1_kafka_int2/">
+      
+      
+      <link rel="icon" href="../../images/logo.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.2">
+    
+    
+      
+        <title>第八节 面试必问的 kafka 知识点 - Jacob Distributed Message System Book</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.50c56a3b.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#kafka" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="Jacob Distributed Message System Book" class="md-header__button md-logo" aria-label="Jacob Distributed Message System Book" data-md-component="logo">
+      
+  <img src="../../images/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Jacob Distributed Message System Book
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              第八节 面试必问的 kafka 知识点
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Chao-Xi/jxdmsbook.git" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    jxdmsbook
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Jacob Distributed Message System Book" class="md-nav__button md-logo" aria-label="Jacob Distributed Message System Book" data-md-component="logo">
+      
+  <img src="../../images/logo.png" alt="logo">
+
+    </a>
+    Jacob Distributed Message System Book
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Chao-Xi/jxdmsbook.git" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    jxdmsbook
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Welcome
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Kafka 快速入门2023
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Kafka 快速入门2023
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap_ka2_intro/1intro/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1 初识 Kafka
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap_ka2_intro/2install/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2 Kafka 安装和重要配置
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap_ka2_intro/3producer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3 Kafka Producer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap_ka2_intro/4consumer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4 Kafka Consumer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Kafka 核心技术
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Kafka 核心技术
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap_ka1/1kafka_intro/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Chap1 Kafka 入门
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap_ka1/2kafa_setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Chap2 kafka基本部署参数
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap_ka1/3kafa_client1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    chap3 客户端实践及原理1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap_ka1/4kafka_client2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    chap4 客户端实践及原理2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap_ka1/5kafka_core/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Chap5 Kafka 内核
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap_ka1/6kafka_mgt/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Chap6 Kafka 管理&工具脚本
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Kafka 技术详解
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Kafka 技术详解
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../1chap1_kafka/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    第一节 Kafka设计介绍
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2chap1_terminology/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    第二节 Kafka中的关键术语解释
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../3chap1_process/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    第三节 Kafka的工作原理和过程
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../4chap1_install/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    第四节 Kafka 集群搭建
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../5chap1_API/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    第五节 Kafka API
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../6chap1_chater/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    第六节 图解 Kafka
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../7chap1_kafka_ha/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    第七节 Kafka 宕机引发的高可用问题
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    第八节 面试必问的 kafka 知识点
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    第八节 面试必问的 kafka 知识点
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#kafka_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      一、kafka概述
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="一、kafka概述">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.1、定义
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.2、消息队列
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13kafka" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.3、kafka的基础架构
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14kafka" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.4、kafka安装
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#15kafka" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.5、启动kafka
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#16kafka" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.6、kafka操作
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#17kafka" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.7、启动生产者生产消息，kafka自带一个生产者和消费者的客户端
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      二、kafka架构深入
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="二、kafka架构深入">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21kafka" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.1、kafka的工作流程
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22kafka" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.2、kafka原理
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      三、kafka的生产者和消费者
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="三、kafka的生产者和消费者">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31kafka" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.1、kafka的生产者
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-kafkaack" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.2 kafka如何保证数据可靠性呢？通过ack来保证
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-kafkahw" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.3 Kafka如何保证消费数据的一致性？通过HW来保证
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-kafka" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.4 kafka的消费者
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      四、Kafka的高效读写机制
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="四、Kafka的高效读写机制">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.1、分布式部署
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.2、顺序写磁盘
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.3、零复制技术
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#zookeeperkafka" class="md-nav__link">
+    <span class="md-ellipsis">
+      五、 zookeeper在kafka中的作用
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../9chap1_kafka_int2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    第九节 Kafka经典面试题详解
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10kafka_rabbitmq/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    第十节 RabbitMQ和Kafka的比较
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../11chap1_kafka_5min/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    第十一节 5 分钟搞懂高性能分布式消息系统 Kafka
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Kafka K8S&Opt
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Kafka K8S&Opt
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2kafka/1kafka_k8s/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    L1 在 Kubernetes 上运行高可用的 Kafka 集群
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2kafka/2kafa_opt1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    L2 Kafka实战—常见运维操作
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2kafka/3kafka_opt2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    L3 kafka应用经验
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2kafka/4operator/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    L4 Kafka Operator 实践和解析
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    分布式链路追踪
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            分布式链路追踪
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../3track_mon/1data_mon/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1 数据观测：数据追踪的基石
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../3track_mon/2log_setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2 系统稳定性的关键系统日志&编写可观测的日志
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Serverless 技术
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Serverless 技术
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../4serverless/1Serverless_intro/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    L1 Serverless 价值与机构
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../4serverless/2functions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    L2 Serverless 函数的简介
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    dapr Distributed Application Runtime
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            dapr Distributed Application Runtime
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dapr/1dapr_intro/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1 Dapr 入门教程
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dapr/2dapr_pub_sub/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2 Dapr 入门教程之发布订阅
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dapr/3dapr_msg/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3 Dapr 入门教程之消息队列
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dapr/4dapr_tracing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4 Dapr 可观测性之分布式追踪
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dapr/5dapr_mon/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5 Dapr 可观测性之指标与日志
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dapr/6dapr_sec/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6 Dapr 入门教程之密钥存储
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dapr/7dapr_middle/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    7 Dapr 入门教程之中间件
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#kafka_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      一、kafka概述
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="一、kafka概述">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.1、定义
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.2、消息队列
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13kafka" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.3、kafka的基础架构
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14kafka" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.4、kafka安装
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#15kafka" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.5、启动kafka
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#16kafka" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.6、kafka操作
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#17kafka" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.7、启动生产者生产消息，kafka自带一个生产者和消费者的客户端
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      二、kafka架构深入
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="二、kafka架构深入">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21kafka" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.1、kafka的工作流程
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22kafka" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.2、kafka原理
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      三、kafka的生产者和消费者
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="三、kafka的生产者和消费者">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31kafka" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.1、kafka的生产者
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-kafkaack" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.2 kafka如何保证数据可靠性呢？通过ack来保证
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-kafkahw" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.3 Kafka如何保证消费数据的一致性？通过HW来保证
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-kafka" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.4 kafka的消费者
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafka_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      四、Kafka的高效读写机制
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="四、Kafka的高效读写机制">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.1、分布式部署
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.2、顺序写磁盘
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.3、零复制技术
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#zookeeperkafka" class="md-nav__link">
+    <span class="md-ellipsis">
+      五、 zookeeper在kafka中的作用
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="kafka"><strong>第八节 面试必问的 kafka 知识点</strong></h1>
+<h2 id="kafka_1"><strong>一、kafka概述</strong></h2>
+<h3 id="11"><strong>1.1、定义</strong></h3>
+<p>Kakfa是一个分布式的基于发布/订阅模式的消息队列（message queue），主要应用于大数据的实时处理领域</p>
+<h3 id="12"><strong>1.2、消息队列</strong></h3>
+<p><strong>1.2.1、传统的消息队列&amp;新式的消息队列的模式</strong></p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_1.png" title="Body image" /> </p>
+<p>上面是传统的消息队列，比如一个用户要注册信息，当用户信息写入数据库后，后面还有一些其他流程，比如发送短信，则需要等这些流程处理完成后，在返回给用户</p>
+<p>而新式的队列是，比如一个用户注册信息，数据直接丢进数据库，就直接返回给用户成功</p>
+<p><strong>1.2.2、使用消息队列的好处</strong></p>
+<ul>
+<li>A 解耦</li>
+<li>B 可恢复性</li>
+<li>C 缓冲</li>
+<li>D 灵活性&amp;峰值处理能力</li>
+<li>E 异步通信</li>
+</ul>
+<p><strong>1.2.3、消息队列的模式</strong></p>
+<p>A、点对点模式</p>
+<p>消息生产者发送消息到消息队列中，然后消息消费者从队列中取出并且消费消息，消息被消费后，队列中不在存储。所以消息消费者不可能消费到已经被消费的消息；队列支持存在多个消费者，但是对于一个消息而言，只会 有一个消费者可以消费；如果想发给多个消费者，则需要多次发送该条消息</p>
+<p>B、发布/订阅模式（一对多，消费者消费数据之后不会清除消息）</p>
+<p>消息生产者将消息发布到topic中，同时有多个消息消费者（订阅）消费该消息，和点对点的方式不同，发布到topic的消息会被所有的订阅者消费；</p>
+<p>但是数据保留是期限的，默认是7天，因为他不是存储系统；</p>
+<p>kafka就是这种模式的；</p>
+<p><strong>有两种方式，一种是是消费者去主动去消费（拉取）消息，而不是生产者推送消息给消费者；另外一种就是生产者主动推送消息给消费者，类似公众号</strong></p>
+<h3 id="13kafka"><strong>1.3、kafka的基础架构</strong></h3>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_2.png" title="Body image" /> </p>
+<p><strong>kafka的基础架构主要有broker、生产者、消费者组构成，当前还包括zookeeper</strong></p>
+<p>生产者负责发送消息</p>
+<p><strong>broker负责缓冲消息，broker中可以创建topic，每个topic又有partition和replication的概念</strong></p>
+<p>消费者组负责处理消息，同一个消费者组的中消费者不能消费同一个partition中的数据，消费者组主要是提高消费能力，比如之前是一个消费者消费100条数据，现在是2个消费者消费100条数据，可以提高消费能力；</p>
+<p><strong>所以消费者组的消费者的个数要小于partition的个数，不然就会有消费者没有partition可以消费，造成资源的浪费</strong></p>
+<p>注：但是不同的消费者组的消费者是可以消费相同的partition数据</p>
+<p>Kakfa如果要组件集群，则只需要注册到一个zk中就可以了，zk中还保留消息消费的进度或者说偏移量或者消费位置</p>
+<ul>
+<li>0.9版本之前偏移量存储在zk</li>
+<li>0.9版本之后偏移量存储在kafka中，kafka定义了一个系统的topic，专用用来存储偏移量的数据；</li>
+</ul>
+<p>为什么要改？主要是考虑到频繁更改偏移量，对zk的压力较大，而且kafka本身自己的处理也较复杂</p>
+<h3 id="14kafka"><strong>1.4、kafka安装</strong></h3>
+<p>A、Kafka的安装只需要解压安装包就可以完成安装</p>
+<pre><code>tar -zxvf kafka_2.11-2.1.1.tgz -C /usr/local/
+</code></pre>
+<p>B、查看配置文件</p>
+<pre><code>[root@es1 config]# pwd
+/usr/local/kafka/config
+[root@es1 config]# ll
+total 84
+-rw-r--r--. 1 root root  906 Feb  8  2019 connect-console-sink.properties
+-rw-r--r--. 1 root root  909 Feb  8  2019 connect-console-source.properties
+-rw-r--r--. 1 root root 5321 Feb  8  2019 connect-distributed.properties
+-rw-r--r--. 1 root root  883 Feb  8  2019 connect-file-sink.properties
+-rw-r--r--. 1 root root  881 Feb  8  2019 connect-file-source.properties
+-rw-r--r--. 1 root root 1111 Feb  8  2019 connect-log4j.properties
+-rw-r--r--. 1 root root 2262 Feb  8  2019 connect-standalone.properties
+-rw-r--r--. 1 root root 1221 Feb  8  2019 consumer.properties
+-rw-r--r--. 1 root root 4727 Feb  8  2019 log4j.properties
+-rw-r--r--. 1 root root 1925 Feb  8  2019 producer.properties
+-rw-r--r--. 1 root root 6865 Jan 16 22:00 server-1.properties
+-rw-r--r--. 1 root root 6865 Jan 16 22:00 server-2.properties
+-rw-r--r--. 1 root root 6873 Jan 16 03:57 server.properties
+-rw-r--r--. 1 root root 1032 Feb  8  2019 tools-log4j.properties
+-rw-r--r--. 1 root root 1169 Feb  8  2019 trogdor.conf
+-rw-r--r--. 1 root root 1023 Feb  8  2019 zookeeper.properties
+</code></pre>
+<p>C、修改配置文件<code>server.properties</code></p>
+<p>设置<code>broker.id</code> 这个是<code>kafka</code>集群区分每个节点的唯一标志符</p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_3.png" title="Body image" /> </p>
+<pre><code>broker.id=0
+</code></pre>
+<p>D、<strong>设置kafka的数据存储路径</strong></p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_4.png" title="Body image" /> </p>
+<blockquote>
+<p>注：这个目录下不能有其他非kafka的目录，不然会导致kafka集群无法启动</p>
+</blockquote>
+<p>E、设置是否可以删除topic，默认情况先kafka的topic是不允许删除的</p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_5.png" title="Body image" /> </p>
+<p>F、Kafka的数据保留的时间，默认是7天</p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_6.png" title="Body image" /> </p>
+<p>G、Log文件最大的大小，如果log文件超过1g会创建一个新的文件</p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_7.png" title="Body image" /> </p>
+<p><strong>H、Kafka连接的zk的地址和连接kafka的超时时间</strong></p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_8.png" title="Body image" /> </p>
+<p>J、默认的partition的个数</p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_9.png" title="Body image" /> </p>
+<h3 id="15kafka"><strong>1.5、启动kafka</strong></h3>
+<p>A、启动方式1，kafka只能单节点启动，所以每个kakfa节点都需要手动启动，下面的方式阻塞的方式启动</p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_10.png" title="Body image" /> </p>
+<p>B、启动方式2，守护的方式启动，推荐</p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_11.png" title="Body image" /> </p>
+<h3 id="16kafka"><strong>1.6、kafka操作</strong></h3>
+<p>A、查看当前kafka集群已有的topic</p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_12.png" title="Body image" /> </p>
+<blockquote>
+<p>注意：这里连接的zookeeper，而不是连接的kafka</p>
+</blockquote>
+<p>B、创建topic，指定分片和副本个数</p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_13.png" title="Body image" /> </p>
+<p>注：</p>
+<ul>
+<li>replication-factor：副本数</li>
+<li>replication-factor：分区数</li>
+</ul>
+<p>Topic：主题名</p>
+<p>如果当前kafka集群只有3个broker节点，则<code>replication-factor</code>最大就是3了，下面的例子创建副本为4，则会报错</p>
+<p>C、删除topic</p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_14.png" title="Body image" /> </p>
+<p>D、查看topic信息</p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_15.png" title="Body image" /> </p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_16.png" title="Body image" /> </p>
+<h3 id="17kafka"><strong>1.7、启动生产者生产消息，kafka自带一个生产者和消费者的客户端</strong></h3>
+<p>A、启动一个生产者，注意此时连的9092端口，连接的kafka集群</p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_17.png" title="Body image" /> </p>
+<p>B、启动一个消费者，注意此时连接的还是9092端口，在0.9版本之前连接的还是2181端口</p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_18.png" title="Body image" /> </p>
+<p>这里我们启动2个消费者来测试一下</p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_19.png" title="Body image" /> </p>
+<p>注：如果不指定的消费者组的配置文件的话，默认每个消费者都属于不同的消费者组</p>
+<p>C、发送消息，可以看到每个消费者都能收到消息</p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_20.png" title="Body image" /> </p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_21.png" title="Body image" /> </p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_22.png" title="Body image" /> </p>
+<p>D、Kakfa中的实际的数据</p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_24.png" title="Body image" /> </p>
+<h2 id="kafka_2"><strong>二、kafka架构深入</strong></h2>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_25.png" title="Body image" /> </p>
+<p>Kafka不能保证消息的全局有序，只能保证消息在partition内有序，因为消费者消费消息是在不同的partition中随机的</p>
+<h3 id="21kafka"><strong>2.1、kafka的工作流程</strong></h3>
+<p><strong>Kafka中的消息是以topic进行分类的，生产者生成消息，消费者消费消息，都是面向topic的</strong></p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_26.png" title="Body image" /> </p>
+<p>Topic是一个逻辑上的概念，而partition是物理上的概念</p>
+<p>每个partition又有副本的概念</p>
+<p>每个partition对应于一个log文件，该log文件中存储的就是生产者生成的数据，生产者生成的数据会不断的追加到该log的文件末端，且每条数据都有自己的offset，消费者都会实时记录自己消费到了那个offset，以便出错的时候从上次的位置继续消费，这个offset就保存在index文件中</p>
+<p>kafka的offset是分区内有序的，但是在不同分区中是无顺序的，kafka不保证数据的全局有序</p>
+<h3 id="22kafka"><strong>2.2、kafka原理</strong></h3>
+<p>由于生产者生产的消息会不断追加到log文件的末尾，为防止log文件过大导致数据定位效率低下，</p>
+<p><strong>Kafka采用分片和索引的机制，将每个partition分为多个segment，每个segment对应2个文件----index文件和log文件，这2个文件位于一个相同的文件夹下，文件夹的命名规则为topic名称+分区序号</strong></p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_27.png" title="Body image" /> </p>
+<p>Indx和log的文件的文件名是当前这个索引是最小的数据的offset</p>
+<p>Kafka如何快速的消费数据呢？</p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_28.png" title="Body image" /> </p>
+<p>Index文件中存储的数据的索引信息，第一列是offset，第二列这这个数据所对应的log文件中的偏移量，就像我们去读文件，使用<code>seek（）</code>设置当前鼠标的位置一样，可以更快的找到数据</p>
+<p>如果要去消费offset为3的数据，首先通过二分法找到数据在哪个index文件中，然后在通过index中offset找到数据在log文件中的offset；这样就可以快速的定位到数据，并消费</p>
+<p>所以kakfa虽然把数据存储在磁盘中，但是他的读取速度还是非常快的</p>
+<h2 id="kafka_3"><strong>三、kafka的生产者和消费者</strong></h2>
+<h3 id="31kafka"><strong>3.1、kafka的生产者</strong></h3>
+<p>Kafka的partition的分区的作用</p>
+<p><strong>Kafka的分区的原因主要就是提供并发提高性能，因为读写是partition为单位读写的；</strong></p>
+<p>那生产者发送消息是发送到哪个partition中呢？</p>
+<p>A、在客户端中指定partition</p>
+<p>B、轮询（推荐）消息1去p1，消息2去p2，消息3去p3，消息4去p1，消息5去p2，消息6去p3 。。。。。。。</p>
+<h3 id="32-kafkaack"><strong>3.2 kafka如何保证数据可靠性呢？通过ack来保证</strong></h3>
+<p>为保证生产者发送的数据，能可靠的发送到指定的topic，topic的每个partition收到生产者发送的数据后，都需要向生产者发送ack（确认收到），如果生产者收到ack，就会进行下一轮的发送，否则重新发送数据</p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_29.png" title="Body image" /> </p>
+<p>那么kafka什么时候向生产者发送ack</p>
+<p><strong>确保follower和leader同步完成，leader在发送ack给生产者，这样才能确保leader挂掉之后，能再follower中选举出新的leader后，数据不会丢失</strong></p>
+<p>那多少个follower同步完成后发送ack</p>
+<ul>
+<li>方案1：半数已经完成同步，就发送ack</li>
+<li>方案2：全部完成同步，才发送ack（kafka采用这种方式）</li>
+</ul>
+<p>采用第二种方案后，设想以下场景，leader收到数据，所有的follower都开始同步数据，但是有一个follower因为某种故障，一直无法完成同步，那leader就要一直等下，直到他同步完成，才能发送ack，这样就非常影响效率，这个问题怎么解决？</p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_30.png" title="Body image" /> </p>
+<p>Leader维护了一个动态的ISR列表（同步副本的作用），只需要这个列表的中的follower和leader同步；</p>
+<ul>
+<li><strong>当ISR中的follower完成数据的同步之后，leader就会给生产者发送ack，如果follower长时间未向leader同步数据，则该follower将被剔除ISR，这个时间阈值也是自定义的</strong>；</li>
+<li><strong>同样leader故障后，就会从ISR中选举新的leader</strong></li>
+</ul>
+<p>怎么选择ISR的节点呢？</p>
+<p>首先通信的时间要快，要和leader要可以很快的完成通信，这个时间默认是10s</p>
+<p>然后就看leader数据差距，消息条数默认是10000条（后面版本被移除）</p>
+<p>为什么移除：因为kafka发送消息是批量发送的，所以会一瞬间leader接受完成，但是follower还没有拉取，所以会频繁的踢出加入ISR，这个数据会保存到zk和内存中，所以会频繁的更新zk和内存。</p>
+<ul>
+<li>A、acks为0</li>
+</ul>
+<p><strong>生产者不等ack，只管往topic丢数据就可以了，这个丢数据的概率非常高</strong></p>
+<ul>
+<li>B、ack为1</li>
+</ul>
+<p>Leader落盘后就会返回ack，会有数据丢失的现象，如果leader在同步完成后出现故障，则会出现数据丢失</p>
+<ul>
+<li>C、ack为-1（all）</li>
+</ul>
+<p><strong>Leader和follower（ISR）落盘才会返回ack，会有数据重复现象，如果在leader已经写完成，且follower同步完成，但是在返回ack的出现故障，则会出现数据重复现象</strong>；</p>
+<p>极限情况下，这个也会有数据丢失的情况，比如follower和leader通信都很慢，所以ISR中只有一个leader节点，这个时候，leader完成落盘，就会返回ack，如果此时leader故障后，就会导致丢失数据</p>
+<h3 id="33-kafkahw"><strong>3.3 Kafka如何保证消费数据的一致性？通过HW来保证</strong></h3>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_31.png" title="Body image" /> </p>
+<ul>
+<li>LEO：指每个follower的最大的offset</li>
+</ul>
+<p><strong>HW（高水位）：指消费者能见到的最大的offset，LSR队列中最小的LEO，也就是说消费者只能看到1~6的数据，后面的数据看不到，也消费不了</strong></p>
+<p>避免leader挂掉后，比如当前消费者消费8这条数据后，leader挂   了，此时比如f2成为leader，f2根本就没有9这条数据，那么消费者就会报错，所以设计了HW这个参数，只暴露最少的数据给消费者，避免上面的问题</p>
+<p><strong>3.3.1、HW保证数据存储的一致性</strong></p>
+<p>A、Follower故障</p>
+<p><strong>Follower发生故障后会被临时提出LSR，待该follower恢复后，follower会读取本地的磁盘记录的上次的HW，并将该log文件高于HW的部分截取掉，从HW开始想leader进行同步，等该follower的LEO大于等于该Partition的hw，即follower追上leader后，就可以重新加入LSR</strong></p>
+<p>B、Leader故障</p>
+<p><strong>Leader发生故障后，会从ISR中选出一个新的leader，</strong>之后，为了保证多个副本之间的数据一致性，其余的follower会先将各自的log文件高于hw的部分截掉（新leader自己不会截掉），然后从新的leader同步数据</p>
+<p>注意：这个是为了保证多个副本间的数据存储的一致性，并不能保证数据不丢失或者不重复</p>
+<p><strong>3.3.2精准一次（幂等性），保证数据不重复</strong></p>
+<ul>
+<li>Ack设置为-1，则可以保证数据不丢失，但是会出现数据重复（at least once）</li>
+<li>Ack设置为0，则可以保证数据不重复，但是不能保证数据不丢失（at most once）</li>
+<li>但是如果鱼和熊掌兼得，该怎么办？这个时候就就引入了Exactl once（精准一次）</li>
+</ul>
+<p>在0.11版本后，引入幂等性解决kakfa集群内部的数据重复，在0.11版本之前，在消费者处自己做处理</p>
+<p>如果启用了幂等性，则ack默认就是<code>-1</code>，kafka就会为每个生产者分配一个pid，并未每条消息分配seqnumber，如果pid、partition、seqnumber三者一样，则kafka认为是重复数据，就不会落盘保存；但是如果生产者挂掉后，也会出现有数据重复的现象；所以幂等性解决在单次会话的单个分区的数据重复，但是在分区间或者跨会话的是数据重复的是无法解决的</p>
+<h3 id="34-kafka"><strong>3.4 kafka的消费者</strong></h3>
+<p><strong>3.4.1 消费方式</strong></p>
+<p>消息队列有两种消费消息的方式，push（微信公众号）、pull（kafka），push模式很难适应消费速率不同的消费者，因为消费发送速率是由broker决定的，他的目标是尽可能以最快的的速度传递消息，但是这样很容易造成消费者来不及处理消息，典型的表现就是拒绝服务以及网络拥塞。而pull的方式可以消费者的消费能力以适当的速率消费消息</p>
+<p>Pull的模式不足之处是如果kafka没有数据，消费者可能会陷入死循环，一直返回空数据，针对这一点，kafka的消费者在消费数据时候回传递一个timeout参数，如果当时没有数据可供消费，消费者会等待一段时间在返回</p>
+<p><strong>3.4.2 分区分配策略</strong></p>
+<p>一个消费者组有多个消费者，一个topic有多个partition。所以必然会涉及到partition的分配问题，即确定哪个partition由哪个消费者来消费</p>
+<p><strong>Kafka提供两种方式，一种是轮询（RountRobin）对于topic组生效，一种是（Range）对于单个topic生效</strong></p>
+<p>轮训：前置条件是需要一个消费者里的消费者订阅的是相同的topic。不然就会出现问题；非默认的的方式</p>
+<p>同一个消费者组里的消费者不能同时消费同一个分区</p>
+<p>比如三个消费者消费一个topic的9个分区</p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_32.png" title="Body image" /> </p>
+<p>如果一个消费者组里有2个消费者，这个消费者组里同时消费2个topic，每个topic又有三个partition</p>
+<p><strong>首先会把2个topic当做一个主题，然后根据topic和partition做hash，然后在按照hash排序。然后轮训分配给一个消费者组中的2个消费者</strong></p>
+<p>如果是下面这样的方式订阅的呢？</p>
+<p>比如有3个topic，每个topic有3个partition，一个消费者组中有2个消费者。消费者1订阅topic1和topic2，消费者2订阅topic2和topic3，那么这样的场景，使用轮训的方式订阅topic就会有问题</p>
+<p>如果是下面这种方式订阅呢</p>
+<p>比如有2个topic，每个topic有3个partition，一个消费者组 有2个消费者，消费者1订阅topic1，消费者2订阅topic2，这样使用轮训的方式订阅topic也会有问题</p>
+<p>所以我们一直强调，使用轮训的方式订阅topic的前提是一个消费者组中的所有消费者订阅的主题是一样的；</p>
+<p>所以轮训的方式不是kafka默认的方式</p>
+<p>Range：是按照单个topic来划分的，默认的分配方式</p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_33.png" title="Body image" /> </p>
+<p>Range的问题会出现消费者数据不均衡的问题</p>
+<p>比如下面的例子，一个消费者组订阅了2个topic，就会出现消费者1消费4个partition，而另外一个消费者只消费2个partition</p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_34.png" title="Body image" /> </p>
+<p>分区策略什么时候会触发呢？当消费者组里的消费者个数变化的时候，会触发分区策略调整，比如消费者里增加消费者，或者减少消费者</p>
+<p><strong>3.4.3 offset的维护</strong></p>
+<p>由于消费者在消费过程中可能会出现断电宕机等故障，消费者恢复后，需要从故障前的位置继续消费，所以消费者需要实施记录自己消费哪个offset，以便故障恢复后继续消费</p>
+<p>Offset保存的位置有2个，一个zk，一个是kafka</p>
+<p>首先看下offset保存到zk</p>
+<p>由消费者组、topic、partition三个元素确定唯一的offset</p>
+<p>所以消费者组中的某个消费者挂掉之后，或者的消费者还是可以拿到这个offset的</p>
+<p>Controller这个节点和zk通信，同步数据，这个节点就是谁先起来，谁就先注册controller，谁就是controller。其他节点和controller信息保持同步</p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_35.png" title="Body image" /> </p>
+<p><strong>3.4.5、消费者组的案例</strong></p>
+<p>修改消费者组id</p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_36.png" title="Body image" /> </p>
+<p>启动一个消费者发送3条数据</p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_37.png" title="Body image" /> </p>
+<p>指定消费者组启动消费者，启动三个消费者，可以看到每个消费者消费了一条数据</p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_38.png" title="Body image" /> </p>
+<p>在演示下不同组可以消费同一个topic的，我们看到2个消费者的消费者都消费到同一条数据</p>
+<p>再次启动一个消费者，这个消费者属于另外一个消费者组</p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_39.png" title="Body image" /> </p>
+<h2 id="kafka_4"><strong>四、Kafka的高效读写机制</strong></h2>
+<h3 id="41"><strong>4.1、分布式部署</strong></h3>
+<p>多节点并行操作</p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_40.png" title="Body image" /> </p>
+<h3 id="42"><strong>4.2、顺序写磁盘</strong></h3>
+<p>Kafka的producer生产数据，要写入到log文件中，写的过程中一直追加到文件末尾，为顺序写，官网有数据表明。同样的磁盘，顺序写能到600M/S，而随机写只有100K/S。这与磁盘的机械结构有关，顺序写之所以快，是因为其省去了大量磁头寻址的时间</p>
+<h3 id="43"><strong>4.3、零复制技术</strong></h3>
+<p>正常情况下，先把数据读到内核空间，在从内核空间把数据读到用户空间，然后在调操作系统的io接口写到内核空间，最终在写到硬盘中</p>
+<p>Kafka是这样做的，直接在内核空间流转io流，所以kafka的性能非常高</p>
+<p><img alt="Alt Image Text" src="../../images/chap1_8_41.png" title="Body image" /> </p>
+<h2 id="zookeeperkafka"><strong>五、 zookeeper在kafka中的作用</strong></h2>
+<p><strong>Kafka集群中有一个broker会被选举为controller，负责管理集群broker的上下线，所有的topic的分区副本分配和leader选举等工作</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2021-9999 Jacob Xi
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7c377c4.min.js"></script>
+      
+    
+  </body>
+</html>
