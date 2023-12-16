@@ -38,6 +38,7 @@ nav:
     - 'L1 在 Kubernetes 上运行高可用的 Kafka 集群': '2kafka/1kafka_k8s.md'
     - 'L2 Kafka实战—常见运维操作': '2kafka/2kafa_opt1.md'
     - 'L3 kafka应用经验': '2kafka/3kafka_opt2.md'
+    - 'L4 Kafka Operator 实践和解析': '2kafka/4operator.md'
   - '分布式链路追踪':
     - '1 数据观测：数据追踪的基石': '3track_mon/1data_mon.md'
     - '2 系统稳定性的关键系统日志&编写可观测的日志': '3track_mon/2log_setup.md'
